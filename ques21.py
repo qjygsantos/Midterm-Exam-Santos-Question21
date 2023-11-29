@@ -24,17 +24,34 @@ hearts = [
 @app.route("/hearts", methods = ['Get'])
 def getHearts():
     return jsonify(hearts)
+
 #3
-
-
-
-#4
 
 @app.route("/hearts", methods=['POST']) 
 def add_hearts():     
     heart = request.get_json()     
     hearts.append(hearts)     
     return {'id': len(hearts)}, 200 
+
+#4
+@app.route('/heartsupdate/<int:heart_id>', methods=['PUT'])
+def update_heart_record(heart_id):
+    data = request.get_json()
+    with open('heart_data.json', 'r') as file:
+        heart = json.load(file)
+
+    for record in heart:
+        if record['heart_id'] == heart_id:
+            record['date'] = data['date']
+            record['heart_rate'] = data['heart_rate']
+
+            with open('heart_data.json', 'w') as file:
+                json.dump(heart, file, indent=2)
+
+            return jsonify({'message': 'Heart record updated successfully'})
+
+    return jsonify({'message': 'Heart record not found'}), 404
+
 
 
 #5
